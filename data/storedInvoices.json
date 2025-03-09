@@ -240,5 +240,43 @@
     "amount_due": 500,
     "due_date": "2025-03-16T17:49:23.825Z",
     "timestamp": "2025-03-09T17:49:29.963Z"
+  },
+  {
+    "invoice_id": "INV-1",
+    "client_name": "ABC Corp",
+    "service_description": "Plumbing Repair",
+    "category": "Maintenance",
+    "amount_due": 500,
+    "due_date": "2025-03-16T18:00:02.448Z",
+    "hours_worked": 5,
+    "hourly_rate": 100
+  },
+  {
+    "invoice_id": "INV-1",
+    "client_name": "ABC Corp",
+    "service_description": "Plumbing Repair",
+    "amount_due": 500,
+    "due_date": "2025-03-16T18:00:02.448Z",
+    "timestamp": "2025-03-09T18:00:10.709Z"
+  },
+  {
+    "invoice_id": "INV-1",
+    "client_name": "ABC Corp",
+    "service_description": "Plumbing Repair",
+    "category": "Maintenance",
+    "amount_due": 500,
+    "due_date": "2025-03-16T18:00:18.540Z",
+    "hours_worked": 5,
+    "hourly_rate": 100
+  },
+  {
+    "invoice_id": "INV-1",
+    "client_name": "ABC Corp",
+    "service_description": "Plumbing Repair",
+    "category": "Maintenance",
+    "amount_due": 500,
+    "due_date": "2025-03-16T18:00:19.447Z",
+    "hours_worked": 5,
+    "hourly_rate": 100
   }
 ]

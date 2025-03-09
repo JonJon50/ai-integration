@@ -32,3 +32,7 @@ export default function RootLayout({
     </html>
   );
 }
+
+
+// John's Notes:
+// - The `RootLayout` component is a layout component that wraps the entire application.

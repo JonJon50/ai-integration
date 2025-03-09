@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
+import { motion } from "framer-motion"; // ✅ Import Framer Motion
 
 interface WorkOrder {
   id: number;
@@ -157,26 +158,41 @@ export default function Home() {
 
       {/* Display Invoice First */}
       {invoice && (
-        <div className="mt-6 p-4 border rounded bg-black-100 w-full max-w-3xl">
+        <motion.div
+          className="mt-6 p-4 border rounded bg-black-100 w-full max-w-3xl"
+          initial={{ opacity: 0, y: -20 }} // Start invisible, slightly above
+          animate={{ opacity: 1, y: 0 }} // Animate to visible
+          transition={{ duration: 0.5 }} // Smooth animation
+        >
           <h2 className="text-xl font-bold">Generated Invoice</h2>
           <p><strong>Client:</strong> {invoice.client_name}</p>
           <p><strong>Service:</strong> {invoice.service_description}</p>
           <p><strong>Amount Due:</strong> ${invoice.amount_due}</p>
           <p><strong>Due Date:</strong> {invoice.due_date}</p>
-        </div>
+        </motion.div>
       )}
 
       {/* Display Yardi Response Second */}
       {yardiResponse && (
-        <div className="mt-6 p-4 border rounded bg-black-100 w-full max-w-3xl">
+        <motion.div
+          className="mt-6 p-4 border rounded bg-black-100 w-full max-w-3xl"
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.2 }} // Delayed fade-in
+        >
           <h2 className="text-xl font-bold">Yardi Response</h2>
           <pre className="whitespace-pre-wrap">{JSON.stringify(yardiResponse, null, 2)}</pre>
-        </div>
+        </motion.div>
       )}
 
       {/* Display Email Preview Last */}
       {emailPreview && (
-        <div className="mt-6 p-6 border rounded-lg bg-black shadow-lg w-full max-w-3xl">
+        <motion.div
+          className="mt-6 p-6 border rounded-lg bg-black shadow-lg w-full max-w-3xl"
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.4 }} // Extra delay for smooth sequence
+        >
           <h2 className="text-xl font-bold text-white mb-4 border-b pb-2">Generated Email</h2>
 
           <div className="p-4 border border-gray-300 bg-black-50 rounded">
@@ -196,8 +212,17 @@ export default function Home() {
 
           <p className="mt-4">Thank you for your business!</p>
           <p className="text-gray-500 text-sm mt-2">If you have any questions, please contact us.</p>
-        </div>
+        </motion.div>
       )}
+
     </main>
   );
 }
+
+// John's Notes:
+// - The `Home` component is the main page component that displays a list of work orders.
+// - It fetches work orders from the API and displays them in a table.
+// - It also has buttons to generate an invoice, send the invoice to Yardi, and send the invoice via email.
+// - The `generateInvoice`, `sendInvoiceToYardi`, and `sendInvoice` functions handle the API calls.
+// - The component uses local state to manage the work orders, invoice, loading state, email preview, and Yardi response.
+// - The component conditionally renders the invoice, Yardi response, and email preview based on the state.
