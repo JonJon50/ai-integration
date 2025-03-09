@@ -1,29 +1,45 @@
 import { NextRequest, NextResponse } from "next/server";
-import nodemailer from "nodemailer";
+import fs from "fs";
+import path from "path";
 
 export async function POST(req: NextRequest) {
-    const { client_email, invoice } = await req.json();
-
-    // Configure email transport
-    const transporter = nodemailer.createTransport({
-        service: "Gmail", // Change to SMTP for production
-        auth: {
-            user: process.env.EMAIL_USER,
-            pass: process.env.EMAIL_PASS,
-        },
-    });
-
-    const mailOptions = {
-        from: process.env.EMAIL_USER,
-        to: client_email,
-        subject: `Invoice ${invoice.invoice_id}`,
-        text: `Dear ${invoice.client_name},\n\nHere is your invoice for ${invoice.service_description}. Amount Due: $${invoice.amount_due}.\n\nDue Date: ${invoice.due_date}\n\nThank you!`,
-    };
-
     try {
-        await transporter.sendMail(mailOptions);
-        return NextResponse.json({ message: "Invoice Sent Successfully!" });
+        const { client_email, invoice } = await req.json();
+
+        if (!invoice) {
+            return NextResponse.json({ message: "Invoice data missing" }, { status: 400 });
+        }
+
+        // Define the file path for storing emails
+        const filePath = path.join(process.cwd(), "data", "storedInvoices.json");
+
+        // Read existing invoices or initialize an empty array
+        let invoices = [];
+        if (fs.existsSync(filePath)) {
+            const fileData = fs.readFileSync(filePath, "utf8");
+            invoices = JSON.parse(fileData);
+        }
+
+        // Generate email content
+        const emailContent = {
+            client_email,
+            invoice_id: invoice.invoice_id,
+            client_name: invoice.client_name,
+            service_description: invoice.service_description,
+            amount_due: invoice.amount_due,
+            due_date: invoice.due_date,
+            timestamp: new Date().toISOString(),
+        };
+
+        // Append new invoice to the list
+        invoices.push(emailContent);
+
+        // Save back to the JSON file
+        fs.writeFileSync(filePath, JSON.stringify(invoices, null, 2), "utf8");
+
+        return NextResponse.json({ message: "Invoice stored successfully!", emailContent });
     } catch (error) {
-        return NextResponse.json({ message: "Failed to send invoice", error }, { status: 500 });
+        console.error("Error saving invoice:", error);
+        return NextResponse.json({ message: "Failed to store invoice", error: String(error) }, { status: 500 });
     }
 }

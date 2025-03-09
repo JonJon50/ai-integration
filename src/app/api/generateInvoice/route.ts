@@ -16,12 +16,13 @@ interface WorkOrder {
 export async function POST(req: NextRequest) {
     const { workOrderId } = await req.json();
 
+    // Load work orders
     const filePath = path.join(process.cwd(), "data", "workOrders.json");
     const fileContents = fs.readFileSync(filePath, "utf8");
-    const workOrders: WorkOrder[] = JSON.parse(fileContents);
+    const workOrders: WorkOrder[] = JSON.parse(fileContents);  // ✅ Apply WorkOrder type
 
-    // Fix the TypeScript error
-    const workOrder = workOrders.find((order: WorkOrder) => order.id === workOrderId);
+    // Find the specific work order
+    const workOrder = workOrders.find((order: WorkOrder) => order.id === workOrderId);  // ✅ Explicit type
 
     if (!workOrder) {
         return NextResponse.json({ message: "Work Order Not Found" }, { status: 404 });
@@ -34,6 +35,8 @@ export async function POST(req: NextRequest) {
         service_description: workOrder.service_description,
         amount_due: workOrder.total_cost,
         due_date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+        hours_worked: workOrder.hours_worked,  // ✅ Added
+        hourly_rate: workOrder.hourly_rate,    // ✅ Added
     };
 
     return NextResponse.json(invoice);
