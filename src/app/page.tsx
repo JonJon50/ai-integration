@@ -17,16 +17,16 @@ interface Invoice {
   service_description: string;
   amount_due: number;
   due_date: string;
-  hours_worked: number;   // ✅ Added
-  hourly_rate: number;    // ✅ Added
+  hours_worked: number;
+  hourly_rate: number;
 }
-
 
 export default function Home() {
   const [workOrders, setWorkOrders] = useState<WorkOrder[]>([]);
   const [invoice, setInvoice] = useState<Invoice | null>(null);
   const [loading, setLoading] = useState(false);
   const [emailPreview, setEmailPreview] = useState<string | null>(null);
+  const [yardiResponse, setYardiResponse] = useState(null);
 
   useEffect(() => {
     fetch("/api/workOrders")
@@ -46,11 +46,34 @@ export default function Home() {
     setLoading(false);
   };
 
+  const sendInvoiceToYardi = async () => {
+    if (!invoice) return alert("Generate an invoice first!");
+    setLoading(true);
+
+    try {
+      const res = await fetch("/api/yardiMock", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ invoice }),
+      });
+
+      if (!res.ok) throw new Error("Failed to send invoice to Yardi");
+
+      const result = await res.json();
+      alert(result.message);
+      setYardiResponse(result);
+    } catch (error) {
+      console.error("Error:", error);
+      alert("Failed to send invoice. Check console for details.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const sendInvoice = async () => {
     if (!invoice) return alert("Generate an invoice first!");
     setLoading(true);
 
-    // Generate Email Content for Preview
     const emailContent = `
       Dear ${invoice.client_name},
 
@@ -62,7 +85,6 @@ export default function Home() {
       Thank you!
     `;
 
-    // Set email preview on the screen
     setEmailPreview(emailContent);
 
     try {
@@ -107,11 +129,18 @@ export default function Home() {
               <td className="border p-2">${order.total_cost}</td>
               <td className="border p-2">
                 <button
-                  className="bg-blue-500 text-white px-3 py-1 rounded mr-2"
+                  className="bg-blue-500 text-white px-3 py-1 rounded"
                   onClick={() => generateInvoice(order.id)}
                   disabled={loading}
                 >
                   Generate Invoice
+                </button>
+                <button
+                  className="bg-purple-500 text-white px-3 py-1 rounded mx-2"
+                  onClick={sendInvoiceToYardi}
+                  disabled={!invoice || loading}
+                >
+                  Send to Yardi
                 </button>
                 <button
                   className="bg-green-500 text-white px-3 py-1 rounded"
@@ -126,6 +155,7 @@ export default function Home() {
         </tbody>
       </table>
 
+      {/* Display Invoice First */}
       {invoice && (
         <div className="mt-6 p-4 border rounded bg-black-100 w-full max-w-3xl">
           <h2 className="text-xl font-bold">Generated Invoice</h2>
@@ -136,6 +166,15 @@ export default function Home() {
         </div>
       )}
 
+      {/* Display Yardi Response Second */}
+      {yardiResponse && (
+        <div className="mt-6 p-4 border rounded bg-black-100 w-full max-w-3xl">
+          <h2 className="text-xl font-bold">Yardi Response</h2>
+          <pre className="whitespace-pre-wrap">{JSON.stringify(yardiResponse, null, 2)}</pre>
+        </div>
+      )}
+
+      {/* Display Email Preview Last */}
       {emailPreview && (
         <div className="mt-6 p-6 border rounded-lg bg-black shadow-lg w-full max-w-3xl">
           <h2 className="text-xl font-bold text-white mb-4 border-b pb-2">Generated Email</h2>
@@ -147,7 +186,6 @@ export default function Home() {
             <p>Here is your invoice for <strong>{invoice?.service_description}</strong>.</p>
           </div>
 
-          {/* Work Denomination Breakdown */}
           <div className="mt-4 p-4 border border-gray-400 bg-black-100">
             <h3 className="text-lg font-semibold mb-2">Work Completed:</h3>
             <p><strong>Hours Worked:</strong> {invoice?.hours_worked} hrs</p>
@@ -160,11 +198,6 @@ export default function Home() {
           <p className="text-gray-500 text-sm mt-2">If you have any questions, please contact us.</p>
         </div>
       )}
-
-
-
-
-
     </main>
   );
 }

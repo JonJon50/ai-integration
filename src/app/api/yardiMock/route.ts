@@ -3,29 +3,33 @@ import fs from "fs";
 import path from "path";
 
 export async function POST(req: NextRequest) {
-    const { invoice } = await req.json();
+    try {
+        const { invoice } = await req.json();
 
-    // Simulate an API processing delay
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+        // Simulate an API processing delay
+        await new Promise((resolve) => setTimeout(resolve, 1000));
 
-    // Simulated response from Yardi
-    const fakeResponse = {
-        status: "Success",
-        message: `Invoice ${invoice.invoice_id} has been received and processed by Yardi.`,
-        timestamp: new Date().toISOString(),
-    };
+        // Simulated Yardi API response
+        const fakeResponse = {
+            status: "Success",
+            message: `Invoice ${invoice.invoice_id} has been received and processed by Yardi.`,
+            timestamp: new Date().toISOString(),
+        };
 
-    // Save the invoice to a mock database (JSON file)
-    const filePath = path.join(process.cwd(), "data", "yardiInvoices.json");
-    let invoices = [];
+        // Save the invoice to a mock database (JSON file)
+        const filePath = path.join(process.cwd(), "data", "yardiInvoices.json");
+        let invoices = [];
 
-    if (fs.existsSync(filePath)) {
-        const fileData = fs.readFileSync(filePath, "utf8");
-        invoices = JSON.parse(fileData);
+        if (fs.existsSync(filePath)) {
+            const fileData = fs.readFileSync(filePath, "utf8");
+            invoices = JSON.parse(fileData);
+        }
+
+        invoices.push(invoice);
+        fs.writeFileSync(filePath, JSON.stringify(invoices, null, 2));
+
+        return NextResponse.json(fakeResponse);
+    } catch (error) {
+        return NextResponse.json({ message: "Yardi API Simulation Failed", error }, { status: 500 });
     }
-
-    invoices.push(invoice);
-    fs.writeFileSync(filePath, JSON.stringify(invoices, null, 2));
-
-    return NextResponse.json(fakeResponse);
 }

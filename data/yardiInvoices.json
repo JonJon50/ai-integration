@@ -1,0 +1,81 @@
+[
+  {
+    "invoice_id": "INV-1",
+    "client_name": "ABC Corp",
+    "service_description": "Plumbing Repair",
+    "amount_due": 500,
+    "due_date": "2025-03-16T04:29:03.314Z",
+    "hours_worked": 5,
+    "hourly_rate": 100
+  },
+  {
+    "invoice_id": "INV-1",
+    "client_name": "ABC Corp",
+    "service_description": "Plumbing Repair",
+    "category": "Maintenance",
+    "amount_due": 500,
+    "due_date": "2025-03-16T04:35:21.688Z",
+    "hours_worked": 5,
+    "hourly_rate": 100
+  },
+  {
+    "invoice_id": "INV-1",
+    "client_name": "ABC Corp",
+    "service_description": "Plumbing Repair",
+    "category": "Maintenance",
+    "amount_due": 500,
+    "due_date": "2025-03-16T04:40:28.966Z",
+    "hours_worked": 5,
+    "hourly_rate": 100
+  },
+  {
+    "invoice_id": "INV-1",
+    "client_name": "ABC Corp",
+    "service_description": "Plumbing Repair",
+    "category": "Maintenance",
+    "amount_due": 500,
+    "due_date": "2025-03-16T04:43:56.022Z",
+    "hours_worked": 5,
+    "hourly_rate": 100
+  },
+  {
+    "invoice_id": "INV-1",
+    "client_name": "ABC Corp",
+    "service_description": "Plumbing Repair",
+    "category": "Maintenance",
+    "amount_due": 500,
+    "due_date": "2025-03-16T04:53:17.791Z",
+    "hours_worked": 5,
+    "hourly_rate": 100
+  },
+  {
+    "invoice_id": "INV-1",
+    "client_name": "ABC Corp",
+    "service_description": "Plumbing Repair",
+    "category": "Maintenance",
+    "amount_due": 500,
+    "due_date": "2025-03-16T14:28:44.468Z",
+    "hours_worked": 5,
+    "hourly_rate": 100
+  },
+  {
+    "invoice_id": "INV-1",
+    "client_name": "ABC Corp",
+    "service_description": "Plumbing Repair",
+    "category": "Maintenance",
+    "amount_due": 500,
+    "due_date": "2025-03-16T15:04:53.365Z",
+    "hours_worked": 5,
+    "hourly_rate": 100
+  },
+  {
+    "invoice_id": "INV-1",
+    "client_name": "ABC Corp",
+    "service_description": "Plumbing Repair",
+    "category": "Maintenance",
+    "amount_due": 500,
+    "due_date": "2025-03-16T17:49:23.825Z",
+    "hours_worked": 5,
+    "hourly_rate": 100
+  }
+]
