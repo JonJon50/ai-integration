@@ -456,5 +456,25 @@
     "due_date": "2025-03-17T00:32:14.249Z",
     "hours_worked": 5,
     "hourly_rate": 100
+  },
+  {
+    "invoice_id": "INV-1",
+    "client_name": "ABC Corp",
+    "service_description": "Plumbing Repair",
+    "category": "Maintenance",
+    "amount_due": 500,
+    "due_date": "2025-03-17T01:05:14.326Z",
+    "hours_worked": 5,
+    "hourly_rate": 100
+  },
+  {
+    "invoice_id": "INV-2",
+    "client_name": "XYZ Ltd",
+    "service_description": "Electrical Fix",
+    "category": "Repair",
+    "amount_due": 360,
+    "due_date": "2025-03-17T01:05:15.207Z",
+    "hours_worked": 3.6,
+    "hourly_rate": 100
   }
 ]
