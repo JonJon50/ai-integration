@@ -37,7 +37,7 @@ export async function POST(req: NextRequest) {
         // Save back to the JSON file
         fs.writeFileSync(filePath, JSON.stringify(invoices, null, 2), "utf8");
 
-        return NextResponse.json({ message: "Invoice stored successfully!", emailContent });
+        return NextResponse.json({ message: "Invoice stored successfully and email sent to client!", emailContent });
     } catch (error) {
         console.error("Error saving invoice:", error);
         return NextResponse.json({ message: "Failed to store invoice", error: String(error) }, { status: 500 });

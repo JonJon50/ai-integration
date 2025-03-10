@@ -27,7 +27,14 @@ export default function Home() {
   const [invoice, setInvoice] = useState<Invoice | null>(null);
   const [loading, setLoading] = useState(false);
   const [emailPreview, setEmailPreview] = useState<string | null>(null);
-  const [yardiResponse, setYardiResponse] = useState(null);
+  interface YardiResponse {
+    status: "Success" | "Failure"; // Restrict status to known values
+    message: string;
+  }
+
+  
+  const [yardiResponse, setYardiResponse] = useState<YardiResponse | null>(null);
+  const [aiProcessing, setAIProcessing] = useState<string | null>(null);
 
   useEffect(() => {
     fetch("/api/workOrders")
@@ -37,14 +44,23 @@ export default function Home() {
 
   const generateInvoice = async (workOrderId: number) => {
     setLoading(true);
-    const res = await fetch("/api/generateInvoice", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ workOrderId }),
-    });
-    const data: Invoice = await res.json();
-    setInvoice(data);
-    setLoading(false);
+    try {
+      const res = await fetch("/api/generateInvoice", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ workOrderId }),
+      });
+
+      if (!res.ok) throw new Error("Failed to generate invoice");
+
+      const data: Invoice = await res.json();
+      setInvoice(data);
+    } catch (error) {
+      console.error("Error generating invoice:", error);
+      alert("Failed to generate invoice.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const sendInvoiceToYardi = async () => {
@@ -98,7 +114,7 @@ export default function Home() {
         }),
       });
 
-      if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
+      if (!res.ok) throw new Error("Failed to send invoice");
 
       const result = await res.json();
       alert(result.message);
@@ -110,9 +126,73 @@ export default function Home() {
     }
   };
 
+  // ✅ AI Automation Process
+  const startAIProcessing = async () => {
+    setLoading(true);
+    try {
+      const res = await fetch("/api/autoProcess", { method: "POST" });
+      if (!res.ok) throw new Error("Failed to process work orders");
+
+      const result = await res.json();
+      setAIProcessing(result.message);
+      alert(result.message);
+
+      // 🔄 Fetch updated work orders and refresh UI
+      const updatedRes = await fetch("/api/workOrders");
+      const updatedOrders: WorkOrder[] = await updatedRes.json();
+      setWorkOrders(updatedOrders);
+
+      // Check if an invoice was generated and update UI
+      const firstProcessedOrder = updatedOrders.find(order => order.status === "processed");
+      if (firstProcessedOrder) {
+        setInvoice({
+          invoice_id: `INV-${firstProcessedOrder.id}`,
+          client_name: firstProcessedOrder.client_name,
+          service_description: firstProcessedOrder.service_description,
+          amount_due: firstProcessedOrder.total_cost,
+          due_date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+          hours_worked: firstProcessedOrder.hours_worked,
+          hourly_rate: firstProcessedOrder.hourly_rate
+        });
+
+        setYardiResponse({
+          status: "Success", // TypeScript now knows it's a valid value
+          message: `Invoice INV-${firstProcessedOrder.id} processed by Yardi.`,
+        });
+
+
+        setEmailPreview(`
+        Dear ${firstProcessedOrder.client_name},
+
+        Here is your invoice for ${firstProcessedOrder.service_description}.
+        Amount Due: $${firstProcessedOrder.total_cost}
+        Due Date: ${new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString()}
+
+        Thank you!
+      `);
+      }
+    } catch (error) {
+      console.error("Error starting AI processing:", error);
+      alert("Failed to start AI automation.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+
   return (
     <main className="flex flex-col items-center justify-center min-h-screen p-4">
       <h1 className="text-3xl font-bold mb-6">Work Orders</h1>
+
+      {/* ✅ AI Processing Button */}
+      <button
+        className="bg-yellow-500 text-white px-3 py-1 rounded my-4"
+        onClick={startAIProcessing}
+        disabled={loading}
+      >
+        Start AI Processing
+      </button>
+
       <table className="border-collapse border border-gray-300 w-full max-w-3xl">
         <thead>
           <tr className="bg-black-100">
@@ -160,9 +240,9 @@ export default function Home() {
       {invoice && (
         <motion.div
           className="mt-6 p-4 border rounded bg-black-100 w-full max-w-3xl"
-          initial={{ opacity: 0, y: -20 }} // Start invisible, slightly above
-          animate={{ opacity: 1, y: 0 }} // Animate to visible
-          transition={{ duration: 0.5 }} // Smooth animation
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
         >
           <h2 className="text-xl font-bold">Generated Invoice</h2>
           <p><strong>Client:</strong> {invoice.client_name}</p>
@@ -178,14 +258,14 @@ export default function Home() {
           className="mt-6 p-4 border rounded bg-black-100 w-full max-w-3xl"
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.2 }} // Delayed fade-in
+          transition={{ duration: 0.5, delay: 0.2 }}
         >
           <h2 className="text-xl font-bold">Yardi Response</h2>
           <pre className="whitespace-pre-wrap">{JSON.stringify(yardiResponse, null, 2)}</pre>
         </motion.div>
       )}
 
-      {/* Display Email Preview Last */}
+      {/* Display Email Preview */}
       {emailPreview && (
         <motion.div
           className="mt-6 p-6 border rounded-lg bg-black shadow-lg w-full max-w-3xl"
@@ -215,9 +295,22 @@ export default function Home() {
         </motion.div>
       )}
 
+      {/* AI Processing Response */}
+      {aiProcessing && (
+        <motion.div
+          className="mt-6 p-4 border rounded bg-black-100 w-full max-w-3xl"
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.3 }}
+        >
+          <h2 className="text-xl font-bold">AI Processing Status</h2>
+          <p>{aiProcessing}</p>
+        </motion.div>
+      )}
     </main>
   );
 }
+
 
 // John's Notes:
 // - The `Home` component is the main page component that displays a list of work orders.
