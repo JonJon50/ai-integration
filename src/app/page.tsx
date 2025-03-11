@@ -1,7 +1,9 @@
 "use client";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion"; // ✅ Import Framer Motion
+import ChatBot from "../components/ChatBot";
 
+// page.tsx component
 interface WorkOrder {
   id: number;
   client_name: string;
@@ -135,7 +137,7 @@ export default function Home() {
 
       const result = await res.json();
       setAIProcessing(result.message);
-      alert(result.message);
+      // alert(result.message); trigger alert after AI processing
 
       // 🔄 Fetch updated work orders and refresh UI
       const updatedRes = await fetch("/api/workOrders");
@@ -307,6 +309,13 @@ export default function Home() {
           <p>{aiProcessing}</p>
         </motion.div>
       )}
+      {/* ChatBot */}
+      <div>
+        <h1>Work Orders</h1>
+        {/* Existing Work Order Table */}
+        <ChatBot startAIProcessing={startAIProcessing} /> {/* ✅ Add AI Chatbot */}
+      </div>
+
     </main>
   );
 }
