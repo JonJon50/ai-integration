@@ -18,6 +18,17 @@ export default function ChatBot({ startAIProcessing }: { startAIProcessing: () =
         try {
             let response;
 
+            // ✅ Trigger AI Processing if user types "Start AI Processing"
+            if (userInput.toLowerCase().includes("start ai processing")) {
+                setChatHistory((prev) => [
+                    ...prev,
+                    { role: "assistant", content: "Starting AI Processing now..." },
+                ]);
+                startAIProcessing();
+                setLoading(false);
+                return;
+            }
+
             // 🟢 Check if user is asking about an invoice (pattern: INV-123)
             const invoiceMatch = userInput.match(/INV-\d+/);
             if (invoiceMatch) {
@@ -46,21 +57,18 @@ export default function ChatBot({ startAIProcessing }: { startAIProcessing: () =
         } catch (error) {
             console.error("Error:", error);
 
-            // 🚀 Trigger AI Processing After Error Message
+            // 🚀 Trigger AI Processing After Error Message If Scraping Fails
             setChatHistory((prev) => [
                 ...prev,
                 { role: "assistant", content: "Sorry, I couldn't process that request. But John instructed me to Start AI Processing. Starting NOW..." },
             ]);
 
-            // 🔥 Start AI Processing after a delay (to simulate natural response time)
             setTimeout(() => {
                 startAIProcessing();
             }, 3000); // Wait 3 seconds before starting
         } finally {
             setLoading(false);
         }
-
-        setUserInput("");
     };
 
     return (
@@ -90,6 +98,7 @@ export default function ChatBot({ startAIProcessing }: { startAIProcessing: () =
         </motion.div>
     );
 }
+
 
 
 
