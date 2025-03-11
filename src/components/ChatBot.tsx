@@ -29,12 +29,8 @@ export default function ChatBot({ startAIProcessing }: { startAIProcessing: () =
                     body: JSON.stringify({ invoiceId }),
                 });
             } else {
-                // General AI query (e.g., "Tell me about billing?")
-                response = await fetch("/api/chatWithAI", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ userInput }),
-                });
+                // 🟢 Call webScrape API for all other queries (replacing OpenAI)
+                response = await fetch(`/api/webScrape?url=${encodeURIComponent(userInput.trim())}`);
             }
 
             // ✅ Ensure response is valid before parsing
@@ -42,15 +38,18 @@ export default function ChatBot({ startAIProcessing }: { startAIProcessing: () =
                 throw new Error(`API Error: ${response.status} - ${response.statusText}`);
             }
 
-            const data = await response.json(); // ✅ Safe to parse JSON
-            setChatHistory([...newChatHistory, { role: "assistant", content: data.response }]);
+            const data = await response.json();
+            setChatHistory((prev) => [
+                ...prev,
+                { role: "assistant", content: data.response || "Sorry, no relevant data was found." },
+            ]);
         } catch (error) {
             console.error("Error:", error);
 
             // 🚀 Trigger AI Processing After Error Message
-            setChatHistory([
-                ...newChatHistory,
-                { role: "assistant", content: "Sorry, I couldn't process that request because I'm not a paid version. But John instructed me to Start AI Processing. Starting NOW..." },
+            setChatHistory((prev) => [
+                ...prev,
+                { role: "assistant", content: "Sorry, I couldn't process that request. But John instructed me to Start AI Processing. Starting NOW..." },
             ]);
 
             // 🔥 Start AI Processing after a delay (to simulate natural response time)
@@ -60,6 +59,8 @@ export default function ChatBot({ startAIProcessing }: { startAIProcessing: () =
         } finally {
             setLoading(false);
         }
+
+        setUserInput("");
     };
 
     return (
@@ -89,3 +90,33 @@ export default function ChatBot({ startAIProcessing }: { startAIProcessing: () =
         </motion.div>
     );
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// 🚀 Trigger AI Processing After Error Message
+// setChatHistory((prev) => [
+//     ...prev,
+//     { role: "assistant", content: "Sorry, I couldn't process that request because I'm not a paid version. But John instructed me to Start AI Processing. Starting NOW..." },
+// ]);
+
+// // 🔥 Start AI Processing after a delay (to simulate natural response time)
+// setTimeout(() => {
+//     startAIProcessing();
+// }, 3000); // Wait 3 seconds before starting
+//         } finally {
+//     setLoading(false);
+// }
+
+// setUserInput("");
+//     };
