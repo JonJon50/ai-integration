@@ -1,3 +1,4 @@
+# flask_service/app.py
 from flask import Flask, request, jsonify
 import requests
 from bs4 import BeautifulSoup
@@ -29,6 +30,7 @@ def scrape():
     
     except Exception as e:
         return jsonify({"error": "Failed to fetch results", "details": str(e)}), 500
-
+    
+# change the port to 8080 3/12/2025
 if __name__ == '__main__':
-    app.run(debug=True, port=5000)
+    app.run(debug=True, port=8080)
