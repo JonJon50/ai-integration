@@ -1,3 +1,4 @@
+// app/webScrape/route API route to fetch data from Flask service
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest) {
@@ -9,7 +10,12 @@ export async function GET(req: NextRequest) {
     }
 
     try {
-        const flaskAPI = `http://127.0.0.1:5000/scrape?url=${encodeURIComponent(url)}`;
+        // ✅ Use the Flask API URL from environment variables
+        const flaskAPI =
+            process.env.NODE_ENV === "development"
+                ? `http://127.0.0.1:8080/scrape?url=${encodeURIComponent(url)}`
+                : `${process.env.FLASK_API_URL}/scrape?url=${encodeURIComponent(url)}`;
+
         const response = await fetch(flaskAPI, { method: "GET" });
 
         // ✅ Check if Flask API responds successfully
