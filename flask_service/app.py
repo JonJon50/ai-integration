@@ -37,4 +37,5 @@ def scrape():
     
 # change the port to 8080 3/12/2025
 if __name__ == '__main__':
-    app.run(debug=True, port=8080)
+    app.run(debug=True, port=8080, host='0.0.0.0')  # ✅ Fix for external access
+

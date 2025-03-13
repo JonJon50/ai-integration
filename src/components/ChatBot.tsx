@@ -61,7 +61,7 @@ export default function ChatBot({ startAIProcessing }: { startAIProcessing: () =
                 ...prev,
                 {
                     role: "assistant",
-                    content: "I'm unable to retrieve that information at the moment. However, I can start the AI processing to assist you. Please hold...",
+                    content: "Thanks for the response, I'm unable to retrieve that information at the moment. However, I can start the AI processing to assist you. Please hold...",
                 },
             ]);
 
