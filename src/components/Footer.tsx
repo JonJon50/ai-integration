@@ -7,7 +7,7 @@ export default function Footer() {
                 {/* Social/contact links with hover effect */}
                 <div className="mt-3 flex space-x-4">
                     <a
-                        href="https://github.com/your-profile"
+                        href="https://github.com/JonJon50"
                         target="_blank"
                         rel="noopener noreferrer"
                         className="px-4 py-2 bg-gray-800 text-white rounded hover:bg-green-500 transition-all duration-300"
@@ -15,7 +15,7 @@ export default function Footer() {
                         GitHub
                     </a>
                     <a
-                        href="https://www.linkedin.com/in/your-profile"
+                        href="https://www.linkedin.com/in/john-hagens-55b15212a/"
                         target="_blank"
                         rel="noopener noreferrer"
                         className="px-4 py-2 bg-gray-800 text-white rounded hover:bg-green-500 transition-all duration-300"
@@ -23,7 +23,7 @@ export default function Footer() {
                         LinkedIn
                     </a>
                     <a
-                        href="mailto:your-email@example.com"
+                        href="mailto:ginuwine104@gmail.com"
                         className="px-4 py-2 bg-gray-800 text-white rounded hover:bg-green-500 transition-all duration-300"
                     >
                         Email
