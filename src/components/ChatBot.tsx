@@ -6,16 +6,16 @@ export default function ChatBot({ startAIProcessing }: { startAIProcessing: () =
     const [userInput, setUserInput] = useState("");
     const [chatHistory, setChatHistory] = useState<{ role: string; content: string }[]>([]);
     const [loading, setLoading] = useState(false);
-    const [showChat, setShowChat] = useState(false); // ✅ Controls when chat appears
+    const [showChat, setShowChat] = useState(false);
 
-    // ✅ Show chatbot with a delay when page loads
+    // ✅ Show chatbot with a delay when the page loads
     useEffect(() => {
         const timer = setTimeout(() => {
             setShowChat(true);
-            setChatHistory([{ role: "assistant", content: "Hello! How can I assist you today?" }]); // ✅ Greeting message
-        }, 3000); // 3-second delay
+            setChatHistory([{ role: "assistant", content: "Hello! How can I assist you today?" }]); // ✅ Initial Greeting
+        }, 3000);
 
-        return () => clearTimeout(timer); // Cleanup on unmount
+        return () => clearTimeout(timer);
     }, []);
 
     const sendMessage = useCallback(async () => {
@@ -28,16 +28,17 @@ export default function ChatBot({ startAIProcessing }: { startAIProcessing: () =
 
         try {
             let response;
+            const userMessage = userInput.trim().toLowerCase();
 
-            // ✅ Trigger AI Processing if exact phrase is detected
-            if (userInput.trim().toLowerCase() === "start ai processing") {
+            // ✅ Trigger AI Processing if the word "start" is typed
+            if (userMessage === "start") {
                 setChatHistory((prev) => [...prev, { role: "assistant", content: "Starting AI Processing now..." }]);
                 startAIProcessing();
                 return;
             }
 
             // 🟢 Check if user asks about an invoice (format: INV-123)
-            const invoiceMatch = userInput.match(/INV-\d+/);
+            const invoiceMatch = userMessage.match(/inv-\d+/);
             if (invoiceMatch) {
                 response = await fetch("/api/getWorkOrderStatus", {
                     method: "POST",
@@ -46,7 +47,7 @@ export default function ChatBot({ startAIProcessing }: { startAIProcessing: () =
                 });
             } else {
                 // 🟢 Call webScrape API for general queries
-                response = await fetch(`/api/webScrape?url=${encodeURIComponent(userInput.trim())}`);
+                response = await fetch(`/api/webScrape?url=${encodeURIComponent(userMessage)}`);
             }
 
             if (!response.ok) throw new Error(`API Error: ${response.status} - ${response.statusText}`);
@@ -59,10 +60,7 @@ export default function ChatBot({ startAIProcessing }: { startAIProcessing: () =
             // 🚀 More professional error message & AI Processing trigger
             setChatHistory((prev) => [
                 ...prev,
-                {
-                    role: "assistant",
-                    content: "Thanks for the response, I'm unable to retrieve that information at the moment. However, I can start the AI processing to assist you. Please hold...",
-                },
+                { role: "assistant", content: "I'm unable to retrieve that information at the moment. However, I can start the AI processing to assist you. Please hold..." }
             ]);
 
             setTimeout(startAIProcessing, 3000);
@@ -73,7 +71,7 @@ export default function ChatBot({ startAIProcessing }: { startAIProcessing: () =
 
     return (
         <>
-            {showChat && ( // ✅ Only show chat after delay
+            {showChat && (
                 <motion.div
                     className="fixed bottom-4 right-4 bg-gray-800 text-white p-4 rounded-lg shadow-lg w-80"
                     initial={{ opacity: 0, y: 20 }}
@@ -109,8 +107,6 @@ export default function ChatBot({ startAIProcessing }: { startAIProcessing: () =
         </>
     );
 }
-
-
 
 
 

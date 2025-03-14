@@ -1,4 +1,3 @@
-# flask_service/app.py
 from flask import Flask, request, jsonify
 import requests
 from bs4 import BeautifulSoup
@@ -10,7 +9,11 @@ def scrape():
     user_query = request.args.get('url', '')
 
     if not user_query:
-        return jsonify({"error": "Missing 'url' parameter"}), 400  # 🛑 Return error if no query is passed
+        return jsonify({"error": "Missing 'url' parameter"}), 400
+
+    # ✅ Trigger AI Processing when "start" is typed
+    if user_query.lower().strip() == "start":
+        return jsonify({"response": "AI Processing started...", "triggerAI": True})
 
     # ✅ Handle Greetings Directly (No Scraping Required)
     greetings = ["hi", "hello", "hey"]
@@ -30,13 +33,9 @@ def scrape():
         content = snippet.get_text(strip=True) if snippet else "No relevant information found."
 
         return jsonify({"response": content})
-    
+
     except Exception as e:
         return jsonify({"error": "Failed to fetch results", "details": str(e)}), 500
 
-    
-# change the port to 8080 3/12/2025
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=8080)
-  # ✅ Fix for external access
-
+    app.run(debug=True, port=8080, host='0.0.0.0')  # ✅ External Access
