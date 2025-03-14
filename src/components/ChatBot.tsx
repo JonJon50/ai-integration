@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
+import { X, Bot } from "lucide-react"; // 🟢 Icons for UI
 
 export default function ChatBot({ startAIProcessing }: { startAIProcessing: () => void }) {
     const [userInput, setUserInput] = useState("");
@@ -8,14 +9,16 @@ export default function ChatBot({ startAIProcessing }: { startAIProcessing: () =
     const [loading, setLoading] = useState(false);
     const [showChat, setShowChat] = useState(false);
 
-    // ✅ Show chatbot with a delay when the page loads
+    // ✅ Auto-open chatbot after 3 seconds (Only on Desktop)
     useEffect(() => {
-        const timer = setTimeout(() => {
-            setShowChat(true);
-            setChatHistory([{ role: "assistant", content: "Hello! How can I assist you today?" }]); // ✅ Initial Greeting
-        }, 3000);
-
-        return () => clearTimeout(timer);
+        const isMobile = window.innerWidth <= 640; // Mobile check
+        if (!isMobile) {
+            const timer = setTimeout(() => {
+                setShowChat(true);
+                setChatHistory([{ role: "assistant", content: "Hello! How can I assist you today?" }]);
+            }, 3000);
+            return () => clearTimeout(timer);
+        }
     }, []);
 
     const sendMessage = useCallback(async () => {
@@ -30,7 +33,7 @@ export default function ChatBot({ startAIProcessing }: { startAIProcessing: () =
             let response;
             const userMessage = userInput.trim().toLowerCase();
 
-            // ✅ Trigger AI Processing if the word "start" is typed
+            // ✅ Trigger AI Processing if "start" is typed
             if (userMessage === "start") {
                 setChatHistory((prev) => [...prev, { role: "assistant", content: "Starting AI Processing now..." }]);
                 startAIProcessing();
@@ -71,21 +74,51 @@ export default function ChatBot({ startAIProcessing }: { startAIProcessing: () =
 
     return (
         <>
+            {/* Floating AI Chat Icon */}
+            {!showChat && (
+                <motion.button
+                    onClick={() => setShowChat(true)}
+                    className="fixed bottom-4 right-4 bg-blue-500 text-white p-3 rounded-full shadow-lg flex items-center justify-center hover:bg-blue-600"
+                    initial={{ opacity: 0, scale: 0.5 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.3 }}
+                >
+                    <Bot size={24} />
+                </motion.button>
+            )}
+
+            {/* Chatbot Window */}
             {showChat && (
                 <motion.div
-                    className="fixed bottom-4 right-4 bg-gray-800 text-white p-4 rounded-lg shadow-lg w-80"
+                    className="fixed bottom-4 right-4 bg-gray-800 text-white p-4 rounded-lg shadow-lg w-80 max-w-full sm:w-96 flex flex-col"
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.5 }}
                 >
-                    <h2 className="text-lg font-bold">AI Chat Assistant</h2>
-                    <div className="h-48 overflow-y-auto p-2 border border-gray-700 rounded-md">
+                    {/* Header with AI Face & Close Button */}
+                    <div className="flex items-center justify-between px-2 py-1 border-b border-gray-700">
+                        {/* AI Face & Title */}
+                        <div className="flex items-center space-x-2">
+                            <Bot size={30} className="text-blue-400 sm:size-22" /> {/* AI Face */}
+                            <h2 className="text-sm sm:text-lg font-bold">AI Chat Assistant</h2>
+                        </div>
+
+                        {/* Close Button */}
+                        <button onClick={() => setShowChat(false)} className="text-gray-400 hover:text-red-700 transition duration-200">
+                            <X size={25} className="sm:size-22" />
+                        </button>
+                    </div>
+
+                    {/* Chat History */}
+                    <div className="h-48 overflow-y-auto p-2 border border-gray-700 rounded-md my-2">
                         {chatHistory.map((msg, index) => (
                             <p key={index} className={msg.role === "user" ? "text-blue-400" : "text-green-400"}>
                                 <strong>{msg.role === "user" ? "You: " : "AI: "}</strong> {msg.content}
                             </p>
                         ))}
                     </div>
+
+                    {/* Input Field */}
                     <input
                         type="text"
                         value={userInput}
@@ -95,6 +128,8 @@ export default function ChatBot({ startAIProcessing }: { startAIProcessing: () =
                         className="w-full p-2 rounded bg-gray-700 text-white mt-2"
                         disabled={loading}
                     />
+
+                    {/* Send Button */}
                     <button
                         onClick={sendMessage}
                         className="w-full bg-blue-500 text-white mt-2 py-1 rounded disabled:bg-gray-500"
@@ -107,7 +142,6 @@ export default function ChatBot({ startAIProcessing }: { startAIProcessing: () =
         </>
     );
 }
-
 
 
 

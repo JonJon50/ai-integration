@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion"; // ✅ Import Framer Motion
 import ChatBot from "../components/ChatBot";
+import Footer from "../components/Footer"; // ✅ Import Footer
 
 // page.tsx component
 interface WorkOrder {
@@ -210,29 +211,33 @@ export default function Home() {
               <td className="border p-2">{order.client_name}</td>
               <td className="border p-2">{order.service_description}</td>
               <td className="border p-2">${order.total_cost}</td>
-              <td className="border p-2">
-                <button
-                  className="bg-blue-500 text-white px-3 py-1 rounded"
-                  onClick={() => generateInvoice(order.id)}
-                  disabled={loading}
-                >
-                  Generate Invoice
-                </button>
-                <button
-                  className="bg-purple-500 text-white px-3 py-1 rounded mx-2"
-                  onClick={sendInvoiceToYardi}
-                  disabled={!invoice || loading}
-                >
-                  Send to Yardi
-                </button>
-                <button
-                  className="bg-green-500 text-white px-3 py-1 rounded"
-                  onClick={sendInvoice}
-                  disabled={!invoice || loading}
-                >
-                  Send Invoice
-                </button>
+              <td className="border p-2 text-center align-middle">
+                <div className="flex flex-col sm:flex-row sm:justify-center items-center space-y-2 sm:space-y-0 sm:space-x-2 w-full">
+                  <button
+                    className="bg-blue-500 text-white px-4 py-2 rounded w-full sm:w-auto text-sm"
+                    onClick={() => generateInvoice(order.id)}
+                    disabled={loading}
+                  >
+                    Generate Invoice
+                  </button>
+                  <button
+                    className="bg-purple-500 text-white px-4 py-2 rounded w-full sm:w-auto text-sm"
+                    onClick={sendInvoiceToYardi}
+                    disabled={!invoice || loading}
+                  >
+                    Send to Yardi
+                  </button>
+                  <button
+                    className="bg-green-500 text-white px-4 py-2 rounded w-full sm:w-auto text-sm"
+                    onClick={sendInvoice}
+                    disabled={!invoice || loading}
+                  >
+                    Send Invoice
+                  </button>
+                </div>
               </td>
+
+
             </tr>
           ))}
         </tbody>
@@ -315,7 +320,8 @@ export default function Home() {
         {/* Existing Work Order Table */}
         <ChatBot startAIProcessing={startAIProcessing} /> {/* ✅ Add AI Chatbot */}
       </div>
-
+      {/* ✅ Footer Added Here */}
+      <Footer />
     </main>
   );
 }

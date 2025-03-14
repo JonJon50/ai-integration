@@ -1,6 +1,0 @@
-
-gunicorn -b 0.0.0.0:8080 app:app
-Flask==3.1.0
-requests==2.32.3
-beautifulsoup4==4.13.3
-gunicorn==23.0.0
