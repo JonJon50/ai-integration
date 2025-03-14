@@ -185,7 +185,9 @@ export default function Home() {
 
   return (
     <main className="flex flex-col items-center justify-center min-h-screen p-4">
-      <h1 className="text-3xl font-bold mb-6">Work Orders</h1>
+      {/* Transparent "Prototype" Text in Upper Right Corner */}
+    
+      <h1 className="text-3xl font-bold mb-6">Work Order Automation</h1>
 
       {/* ✅ AI Processing Button */}
       <button
@@ -316,7 +318,7 @@ export default function Home() {
       )}
       {/* ChatBot */}
       <div>
-        <h1>Work Orders</h1>
+        <h1 className="text-white text-3xl font-bold opacity-10 pointer-events-none mb-6">Prototype</h1>
         {/* Existing Work Order Table */}
         <ChatBot startAIProcessing={startAIProcessing} /> {/* ✅ Add AI Chatbot */}
       </div>
@@ -334,3 +336,4 @@ export default function Home() {
 // - The `generateInvoice`, `sendInvoiceToYardi`, and `sendInvoice` functions handle the API calls.
 // - The component uses local state to manage the work orders, invoice, loading state, email preview, and Yardi response.
 // - The component conditionally renders the invoice, Yardi response, and email preview based on the state.
+
