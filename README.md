@@ -81,7 +81,7 @@
 ---
 
 ## 📸 Screenshots
-(Add relevant screenshots here)
+
 - ![Dashboard View](/public/AI.png)
 - ![Chatbot in Action](/public/chatbot.png)
 - ![Invoice Processing](/public/dashboard.png)

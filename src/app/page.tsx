@@ -38,6 +38,7 @@ export default function Home() {
   
   const [yardiResponse, setYardiResponse] = useState<YardiResponse | null>(null);
   const [aiProcessing, setAIProcessing] = useState<string | null>(null);
+  const [buttonClicked, setButtonClicked] = useState(false);
 
   useEffect(() => {
     fetch("/api/workOrders")
@@ -190,13 +191,25 @@ export default function Home() {
       <h1 className="text-3xl font-bold mb-6">Work Order Automation</h1>
 
       {/* ✅ AI Processing Button */}
-      <button
+      <motion.button
         className="bg-yellow-500 text-white px-3 py-1 rounded my-4"
-        onClick={startAIProcessing}
+        onClick={() => {
+          startAIProcessing();
+          setButtonClicked(true); // Start animation
+          setTimeout(() => setButtonClicked(false), 5000); // Stop animation after 5 seconds
+        }}
         disabled={loading}
+        animate={
+          buttonClicked
+            ? { scale: [1, 1.1, 1], backgroundColor: ["#3b82f6", "#2563eb", "#3b82f6"] }
+            : {}
+        }
+        transition={{ duration: 0.5, repeat: 10, repeatType: "reverse" }} // Repeat for 5 seconds (10 times * 0.5s per cycle)
       >
         Start AI Processing
-      </button>
+      </motion.button>
+
+
 
       <table className="border-collapse border border-gray-300 w-full max-w-3xl">
         <thead>
